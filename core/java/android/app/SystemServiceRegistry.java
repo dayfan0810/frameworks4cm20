@@ -1521,6 +1521,12 @@ public final class SystemServiceRegistry {
                                 IAmbientContextManager.Stub.asInterface(iBinder);
                         return new AmbientContextManager(ctx.getOuterContext(), manager);
                     }});
+        registerService(Context.THERMAL_MONITOR_SERVICE, ThermalMonitorManager.class,
+                new CachedServiceFetcher<ThermalMonitorManager>() {
+                    @Override
+                    public ThermalMonitorManager createService(ContextImpl ctx) {
+                        return new ThermalMonitorManager();
+                    }});
 
         sInitializing = true;
         try {

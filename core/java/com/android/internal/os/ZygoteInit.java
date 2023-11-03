@@ -787,6 +787,7 @@ public class ZygoteInit {
             zygoteServer.closeServerSocket();
             return handleSystemServerProcess(parsedArgs);
         }
+        Slog.i(TAG, "forkSystemServer--deng, return null runnable");
 
         return null;
     }
@@ -911,12 +912,13 @@ public class ZygoteInit {
                 // {@code r == null} in the parent (zygote) process, and {@code r != null} in the
                 // child (system_server) process.
                 if (r != null) {
+                    Log.i(TAG, "deng--r.run(), app ");
                     r.run();
                     return;
                 }
             }
 
-            Log.i(TAG, "Accepting command socket connections");
+            Log.i(TAG, "deng--Accepting command socket connections");
 
             // The select loop returns early in the child process after a fork and
             // loops forever in the zygote.

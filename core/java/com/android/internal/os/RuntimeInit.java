@@ -300,6 +300,14 @@ public class RuntimeInit {
      */
     protected static Runnable findStaticMain(String className, String[] argv,
             ClassLoader classLoader) {
+        //classname就两种
+        if(className.equals("com.android.server.SystemServer")){
+            Slog.i(TAG,"deng-SystemServer-findStaticMain", new Throwable("deng-SystemServer"));
+        } else if (className.equals("android.app.ActivityThread")) {
+            Slog.i(TAG,"deng-ActivityThread-findStaticMain", new Throwable("deng-ActivityThread"));
+        }else {
+            Slog.i(TAG,"deng--findStaticMain, do not show this log");
+        }
         Class<?> cl;
 
         try {

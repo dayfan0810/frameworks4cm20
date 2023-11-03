@@ -7132,6 +7132,7 @@
                 <action android:name="android.service.selectiontoolbar.SelectionToolbarRenderService"/>
             </intent-filter>
         </service>
+        <service android:name="com.android.server.thermal.CpuThermalService" />
 
         <provider
             android:name="com.android.server.textclassifier.IconsContentProvider"

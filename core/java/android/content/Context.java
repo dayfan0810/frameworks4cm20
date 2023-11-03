@@ -6001,6 +6001,8 @@ public abstract class Context {
      */
     public static final String GAME_SERVICE = "game";
 
+    public static final String THERMAL_MONITOR_SERVICE = "thermal_monitor";
+
     /**
      * Use with {@link #getSystemService(String)} to access
      * {@link android.content.pm.verify.domain.DomainVerificationManager} to retrieve approval and

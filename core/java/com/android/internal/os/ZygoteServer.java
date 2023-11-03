@@ -441,10 +441,13 @@ class ZygoteServer {
             // Allocate enough space for the poll structs, taking into account
             // the state of the USAP pool for this Zygote (could be a
             // regular Zygote, a WebView Zygote, or an AppZygote).
+
+            //cm20这里mUsapPoolEnabled = false，if分支走不进来
             if (mUsapPoolEnabled) {
                 usapPipeFDs = Zygote.getUsapPipeFDs();
                 pollFDs = new StructPollfd[socketFDs.size() + 1 + usapPipeFDs.length];
             } else {
+                Slog.i(TAG,"deng-runSelectLoop--1111");
                 pollFDs = new StructPollfd[socketFDs.size()];
             }
 
@@ -462,16 +465,17 @@ class ZygoteServer {
                 pollFDs[pollIndex].fd = socketFD;
                 pollFDs[pollIndex].events = (short) POLLIN;
                 ++pollIndex;
+                Slog.i(TAG,"deng-runSelectLoop--2222");
             }
 
             final int usapPoolEventFDIndex = pollIndex;
 
+            //cm20这里mUsapPoolEnabled = false，if分支走不进来
             if (mUsapPoolEnabled) {
                 pollFDs[pollIndex] = new StructPollfd();
                 pollFDs[pollIndex].fd = mUsapPoolEventFD;
                 pollFDs[pollIndex].events = (short) POLLIN;
                 ++pollIndex;
-
                 // The usapPipeFDs array will always be filled in if the USAP Pool is enabled.
                 assert usapPipeFDs != null;
                 for (int usapPipeFD : usapPipeFDs) {
@@ -487,9 +491,13 @@ class ZygoteServer {
 
             int pollTimeoutMs;
 
+
+            //开机启动时cm20走if分支，else分支走不进去
             if (mUsapPoolRefillTriggerTimestamp == INVALID_TIMESTAMP) {
                 pollTimeoutMs = -1;
+                Slog.i(TAG,"deng-runSelectLoop--3333");
             } else {
+                Slog.i(TAG,"deng-runSelectLoop--走不进来");
                 long elapsedTimeMs = System.currentTimeMillis() - mUsapPoolRefillTriggerTimestamp;
 
                 if (elapsedTimeMs >= mUsapPoolRefillDelayMs) {
@@ -499,14 +507,12 @@ class ZygoteServer {
                     pollTimeoutMs = 0;
                     mUsapPoolRefillTriggerTimestamp = INVALID_TIMESTAMP;
                     mUsapPoolRefillAction = UsapPoolRefillAction.DELAYED;
-
                 } else if (elapsedTimeMs <= 0) {
                     // This can occur if the clock used by currentTimeMillis is reset, which is
                     // possible because it is not guaranteed to be monotonic.  Because we can't tell
                     // how far back the clock was set the best way to recover is to simply re-start
                     // the respawn delay countdown.
                     pollTimeoutMs = mUsapPoolRefillDelayMs;
-
                 } else {
                     pollTimeoutMs = (int) (mUsapPoolRefillDelayMs - elapsedTimeMs);
                 }
@@ -519,6 +525,7 @@ class ZygoteServer {
                 throw new RuntimeException("poll failed", ex);
             }
 
+            //开机启动时cm20的if分支走不进来，走else
             if (pollReturnValue == 0) {
                 // The poll returned zero results either when the timeout value has been exceeded
                 // or when a non-blocking poll is issued and no FDs are ready.  In either case it
@@ -537,13 +544,14 @@ class ZygoteServer {
                     }
 
                     if (pollIndex == 0) {
+                        Slog.i(TAG,"deng-runSelectLoop--4444");
                         // Zygote server socket
                         ZygoteConnection newPeer = acceptCommandPeer(abiList);
                         peers.add(newPeer);
                         socketFDs.add(newPeer.getFileDescriptor());
                     } else if (pollIndex < usapPoolEventFDIndex) {
                         // Session socket accepted from the Zygote server socket
-
+                        Slog.i(TAG,"deng-runSelectLoop--5555");
                         try {
                             ZygoteConnection connection = peers.get(pollIndex);
                             boolean multipleForksOK = !isUsapPoolEnabled()
@@ -553,6 +561,7 @@ class ZygoteServer {
 
                             // TODO (chriswailes): Is this extra check necessary?
                             if (mIsForkChild) {
+                                Slog.i(TAG,"deng-runSelectLoop--6666");
                                 // We're in the child. We should always have a command to run at
                                 // this stage if processCommand hasn't called "exec".
                                 if (command == null) {
@@ -565,7 +574,7 @@ class ZygoteServer {
                                 if (command != null) {
                                     throw new IllegalStateException("command != null");
                                 }
-
+                                Slog.i(TAG,"deng-runSelectLoop--7777");
                                 // We don't know whether the remote side of the socket was closed or
                                 // not until we attempt to read from it from processCommand. This
                                 // shows up as a regular POLLIN event in our regular processing

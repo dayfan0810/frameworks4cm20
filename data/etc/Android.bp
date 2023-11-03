@@ -181,3 +181,7 @@ filegroup {
     name: "services.core.protolog.json",
     srcs: ["services.core.protolog.json"],
 }
+prebuilt_etc {
+     name: "thermalconf.json",
+     src: "thermalconf.json",
+}

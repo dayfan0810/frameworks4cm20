@@ -213,6 +213,7 @@ import com.android.server.webkit.WebViewUpdateService;
 import com.android.server.wm.ActivityTaskManagerService;
 import com.android.server.wm.WindowManagerGlobalLock;
 import com.android.server.wm.WindowManagerService;
+import com.android.server.thermal.ThermalMonitorManagerService;
 
 import dalvik.system.VMRuntime;
 
@@ -1666,6 +1667,14 @@ public final class SystemServer implements Dumpable {
 
             t.traceBegin("StartLogcatManager");
             mSystemServiceManager.startService(LogcatManagerService.class);
+            t.traceEnd();
+
+            t.traceBegin("StartThermalMonitorManagerService");
+            try {
+                mSystemServiceManager.startService(ThermalMonitorManagerService.Lifecycle.class);
+            } catch (Throwable e) {
+                reportWtf("starting ThermalMonitorManagerService", e);
+            }
             t.traceEnd();
 
         } catch (Throwable e) {

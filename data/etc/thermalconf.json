@@ -1,0 +1,48 @@
+{
+    "CPU0_MONITOR": {
+        "sampling": 1000,
+        "thresholds": [
+            30000,
+            35000,
+            38000
+        ],
+        "thresholds_clr": [
+            28000,
+            30000,
+            35000
+        ],
+        "actions": [
+            "cpu0",
+            "cpu0",
+            "cpu0"
+        ],
+        "action_info": [
+            1708800,
+            1574400,
+            1324800
+        ]
+    },
+    "CPU6_MONITOR": {
+        "sampling": 1000,
+        "thresholds": [
+            32000,
+            35000,
+            38000
+        ],
+        "thresholds_clr": [
+            30000,
+            32000,
+            35000
+        ],
+        "actions": [
+            "cpu6",
+            "cpu6",
+            "cpu6"
+        ],
+        "action_info": [
+            1804800,
+            1651200,
+            1536000
+        ]
+    }
+}

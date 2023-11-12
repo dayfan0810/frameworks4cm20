@@ -302,9 +302,9 @@ public class RuntimeInit {
             ClassLoader classLoader) {
         //classname就两种
         if(className.equals("com.android.server.SystemServer")){
-            Slog.i(TAG,"deng-SystemServer-findStaticMain", new Throwable("deng-SystemServer"));
+            Slog.i(TAG,"deng-SystemServer-findStaticMain", new Throwable("ZygoteInit-findStaticMain is SystemServer"));
         } else if (className.equals("android.app.ActivityThread")) {
-            Slog.i(TAG,"deng-ActivityThread-findStaticMain", new Throwable("deng-ActivityThread"));
+            Slog.i(TAG,"deng-ActivityThread-findStaticMain", new Throwable("ZygoteInit-findStaticMain is ActivityThread"));
         }else {
             Slog.i(TAG,"deng--findStaticMain, do not show this log");
         }

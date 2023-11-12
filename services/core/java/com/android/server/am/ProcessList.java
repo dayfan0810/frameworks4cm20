@@ -1640,6 +1640,8 @@ public final class ProcessList {
         if (app.isPendingStart()) {
             return true;
         }
+        android.util.Log.i(TAG, "deng--startProcessLocked", new Throwable("startProcessLocked"));
+
         final long startUptime = SystemClock.uptimeMillis();
         final long startElapsedTime = SystemClock.elapsedRealtime();
         if (app.getPid() > 0 && app.getPid() != ActivityManagerService.MY_PID) {
@@ -2104,6 +2106,8 @@ public final class ProcessList {
     }
 
     private AppZygote createAppZygoteForProcessIfNeeded(final ProcessRecord app) {
+        android.util.Log.i(TAG, "deng--createAppZygoteForProcessIfNeeded", new Throwable("createAppZygoteForProcessIfNeeded"));
+
         synchronized (mService) {
             // The UID for the app zygote should be the UID of the application hosting
             // the service.

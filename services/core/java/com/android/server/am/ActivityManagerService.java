@@ -4896,6 +4896,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                 thread.runIsolatedEntryPoint(
                         app.getIsolatedEntryPoint(), app.getIsolatedEntryPointArgs());
             } else if (instr2 != null) {
+                //Binder调用，通知App端的ApplicationThread执行真正的bindApplication
                 thread.bindApplication(processName, appInfo,
                         app.sdkSandboxClientAppVolumeUuid, app.sdkSandboxClientAppPackage,
                         providerList,
@@ -5052,6 +5053,7 @@ public class ActivityManagerService extends IActivityManager.Stub
         if (thread == null) {
             throw new SecurityException("Invalid application interface");
         }
+        Slog.i(TAG,"deng-AMS--attachApplication");
         synchronized (this) {
             int callingPid = Binder.getCallingPid();
             final int callingUid = Binder.getCallingUid();
@@ -5092,6 +5094,7 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     final void finishBooting() {
+        android.util.Log.i(TAG, "deng--finishBooting--last()", new Throwable("finishBooting--last"));
         TimingsTraceAndSlog t = new TimingsTraceAndSlog(TAG + "Timing",
                 Trace.TRACE_TAG_ACTIVITY_MANAGER);
         t.traceBegin("FinishBooting");
@@ -8076,18 +8079,22 @@ public class ActivityManagerService extends IActivityManager.Stub
      * Ready. Set. Go!
      */
     public void systemReady(final Runnable goingCallback, @NonNull TimingsTraceAndSlog t) {
+        Slog.i(TAG, "mActivityManagerService.systemReady--111");
         t.traceBegin("PhaseActivityManagerReady");
         mSystemServiceManager.preSystemReady();
         synchronized(this) {
             if (mSystemReady) {
+                Slog.i(TAG, "mActivityManagerService.systemReady--开机不走1");
                 // If we're done calling all the receivers, run the next "boot phase" passed in
                 // by the SystemServer
                 if (goingCallback != null) {
+                    Slog.i(TAG, "mActivityManagerService.systemReady--开机不走2");
                     goingCallback.run();
                 }
                 t.traceEnd(); // PhaseActivityManagerReady
                 return;
             }
+            Slog.i(TAG, "mActivityManagerService.systemReady--222");
 
             t.traceBegin("controllersReady");
             mLocalDeviceIdleController =
@@ -8177,7 +8184,11 @@ public class ActivityManagerService extends IActivityManager.Stub
         }
         t.traceEnd();
 
-        if (goingCallback != null) goingCallback.run();
+        if (goingCallback != null) {
+            Slog.i(TAG, "mActivityManagerService.systemReady--333--before-goingCallback.run");
+            goingCallback.run();
+        }
+        Slog.i(TAG, "mActivityManagerService.systemReady--444--after-goingCallback.run");
 
         t.traceBegin("getCurrentUser"); // should be fast, but these methods acquire locks
         // Check the current user here as a user can be started inside goingCallback.run() from

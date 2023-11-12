@@ -645,6 +645,8 @@ class ActivityStarter {
      * @return The starter result.
      */
     int execute() {
+//        Slog.i(TAG,"deng-ActivityStart--execute", new Throwable("ActivityStart--execute"));//TODO
+
         try {
             onExecutionStarted();
 

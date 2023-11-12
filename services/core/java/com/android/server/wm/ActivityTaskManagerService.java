@@ -4894,6 +4894,8 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
 
     void startProcessAsync(ActivityRecord activity, boolean knownToBeDead, boolean isTop,
             String hostingType) {
+        android.util.Log.i(TAG, "deng--startProcessAsync", new Throwable("startProcessAsync"));
+
         try {
             if (Trace.isTagEnabled(TRACE_TAG_WINDOW_MANAGER)) {
                 Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER, "dispatchingStartProcess:"
@@ -4901,6 +4903,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
             }
             // Post message to start process to avoid possible deadlock of calling into AMS with the
             // ATMS lock held.
+            //一般XXXManagerInternal是抽象类，实现类就是XXXManagerService.LocalService
             final Message m = PooledLambda.obtainMessage(ActivityManagerInternal::startProcess,
                     mAmInternal, activity.processName, activity.info.applicationInfo, knownToBeDead,
                     isTop, hostingType, activity.intent.getComponent());

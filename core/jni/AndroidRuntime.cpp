@@ -1194,7 +1194,6 @@ void AndroidRuntime::start(const char* className, const Vector<String8>& options
 {
     ALOGD(">>>>>> START %s uid %d <<<<<<\n",
             className != NULL ? className : "(unknown)", getuid());
-
     static const String8 startSystemServer("start-system-server");
     // Whether this is the primary zygote, meaning the zygote which will fork system server.
     bool primary_zygote = false;

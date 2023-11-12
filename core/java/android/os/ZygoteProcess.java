@@ -198,6 +198,7 @@ public class ZygoteProcess {
             }
 
             try {
+                android.util.Log.i("ZygoteProcess.ZygoteState", "deng--connect", new Throwable("connect"));
                 zygoteSessionSocket.connect(zygoteSocketAddress);
                 zygoteInputStream = new DataInputStream(zygoteSessionSocket.getInputStream());
                 zygoteOutputWriter =
@@ -463,6 +464,7 @@ public class ZygoteProcess {
     private Process.ProcessStartResult attemptZygoteSendArgsAndGetResult(
             ZygoteState zygoteState, String msgStr) throws ZygoteStartFailedEx {
         try {
+//            android.util.Log.i("ZygoteProcess", "deng--attemptZygoteSendArgsAndGetResult", new Throwable("attemptZygoteSendArgsAndGetResult"));
             final BufferedWriter zygoteWriter = zygoteState.mZygoteOutputWriter;
             final DataInputStream zygoteInputStream = zygoteState.mZygoteInputStream;
 

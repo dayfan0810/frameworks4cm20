@@ -2825,6 +2825,7 @@ public final class SystemServer implements Dumpable {
         // initialization.
         mActivityManagerService.systemReady(() -> {
             Slog.i(TAG, "Making services ready");
+            Slog.i(TAG, "mActivityManagerService.systemReady--AAA");
             t.traceBegin("StartActivityManagerReadyPhase");
             mSystemServiceManager.startBootPhase(t, SystemService.PHASE_ACTIVITY_MANAGER_READY);
             t.traceEnd();
@@ -3071,6 +3072,7 @@ public final class SystemServer implements Dumpable {
                 reportWtf("Triggering OdsignStatsLogger", e);
             }
             t.traceEnd();
+            Slog.i(TAG, "mActivityManagerService.systemReady--BBB");
         }, t);
 
         t.traceBegin("StartSystemUI");
@@ -3081,7 +3083,8 @@ public final class SystemServer implements Dumpable {
         }
         t.traceEnd();
 
-        t.traceEnd(); // startOtherServices
+        t.traceEnd(); // startOtherService
+        Slog.i(TAG, "mActivityManagerService. NOT IN systemReady--CCC");
     }
 
     /**
@@ -3100,6 +3103,11 @@ public final class SystemServer implements Dumpable {
             String name = info.getName();
             String jarPath = info.getJarPath();
             t.traceBegin("starting " + name);
+            // 当前只会打印
+            // name ==== com.android.server.scheduling.RebootReadinessManagerService$Lifecycle,
+            // jarPath = /apex/com.android.scheduling/javalib/service-scheduling.jar
+            Slog.d("startApexServices", "name ==== "+name);
+            Slog.d("startApexServices", "jarpath ==== "+jarPath);
             if (TextUtils.isEmpty(jarPath)) {
                 mSystemServiceManager.startService(name);
             } else {
@@ -3206,6 +3214,7 @@ public final class SystemServer implements Dumpable {
 
     private static void startSystemUi(Context context, WindowManagerService windowManager) {
         PackageManagerInternal pm = LocalServices.getService(PackageManagerInternal.class);
+        android.util.Log.i(TAG, "deng-startSystemUi, pm.toString = "+pm.toString(), new Throwable("deng-startSystemUi"));
         Intent intent = new Intent();
         intent.setComponent(pm.getSystemUiServiceComponent());
         intent.addFlags(Intent.FLAG_DEBUG_TRIAGED_MISSING);

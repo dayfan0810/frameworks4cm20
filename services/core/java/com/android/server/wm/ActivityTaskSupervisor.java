@@ -929,6 +929,7 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
                 clientTransaction.setLifecycleStateRequest(lifecycleItem);
 
                 // Schedule transaction.
+                //TODO 很重要
                 mService.getLifecycleManager().scheduleTransaction(clientTransaction);
 
                 if (procConfig.seq > mRootWindowContainer.getConfiguration().seq) {
@@ -1040,6 +1041,7 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
     }
 
     void startSpecificActivity(ActivityRecord r, boolean andResume, boolean checkConfig) {
+        android.util.Log.i(TAG, "deng--startSpecificActivity", new Throwable("startSpecificActivity"));
         // Is this activity's application already running?
         final WindowProcessController wpc =
                 mService.getProcessController(r.processName, r.info.applicationInfo.uid);
@@ -1354,6 +1356,7 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
     void activityIdleInternal(ActivityRecord r, boolean fromTimeout,
             boolean processPausingActivities, Configuration config) {
         if (DEBUG_ALL) Slog.v(TAG, "Activity idle: " + r);
+//        android.util.Log.i(TAG, "deng--activityIdleInternal()", new Throwable("activityIdleInternal"));//TODO
 
         if (r != null) {
             if (DEBUG_IDLE) Slog.d(TAG_IDLE, "activityIdleInternal: Callers="
@@ -2088,6 +2091,7 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
     }
 
     final void scheduleIdle() {
+        android.util.Log.i(TAG, "deng--scheduleIdle", new Throwable("scheduleIdle"));
         if (!mHandler.hasMessages(IDLE_NOW_MSG)) {
             if (DEBUG_IDLE) Slog.d(TAG_IDLE, "scheduleIdle: Callers=" + Debug.getCallers(4));
             mHandler.sendEmptyMessage(IDLE_NOW_MSG);

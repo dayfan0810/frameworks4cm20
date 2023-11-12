@@ -1072,7 +1072,7 @@ public final class ActivityThread extends ClientTransactionHandler
             s.token = token;
             s.info = info;
             s.compatInfo = compatInfo;
-
+//            android.util.Log.i(TAG, "deng--sendMessage", new Throwable("H.CREATE_SERVICE"));//TODO
             sendMessage(H.CREATE_SERVICE, s);
         }
 
@@ -1185,6 +1185,7 @@ public final class ActivityThread extends ClientTransactionHandler
             data.mSerializedSystemFontMap = serializedSystemFontMap;
             data.startRequestedElapsedTime = startRequestedElapsedTime;
             data.startRequestedUptime = startRequestedUptime;
+            android.util.Log.i(TAG, "deng--sendMessage", new Throwable("H.BIND_APPLICATION"));
             sendMessage(H.BIND_APPLICATION, data);
         }
 
@@ -3513,6 +3514,8 @@ public final class ActivityThread extends ClientTransactionHandler
 
     /**  Core implementation of activity launch. */
     private Activity performLaunchActivity(ActivityClientRecord r, Intent customIntent) {
+        android.util.Log.i(TAG, "deng--单例模式一书中关于context时提到的，performLaunchActivity", new Throwable("performLaunchActivity"));
+
         ActivityInfo aInfo = r.activityInfo;
         if (r.packageInfo == null) {
             r.packageInfo = getPackageInfo(aInfo.applicationInfo, r.compatInfo,
@@ -5704,6 +5707,7 @@ public final class ActivityThread extends ClientTransactionHandler
             r.mPreserveWindow = true;
         }
         mH.removeMessages(H.RELAUNCH_ACTIVITY, r.token);
+        android.util.Log.i(TAG, "deng--sendMessage", new Throwable("H.RELAUNCH_ACTIVITY"));
         sendMessage(H.RELAUNCH_ACTIVITY, r.token);
     }
 
@@ -7604,6 +7608,8 @@ public final class ActivityThread extends ClientTransactionHandler
         mConfigurationController = new ConfigurationController(this);
         mSystemThread = system;
         if (!system) {
+            //每次打开APP时会走该分支
+            Slog.i(TAG,"deng-ActivityThread--main--attach()--!system", new Throwable("AT-attach"));
             android.ddm.DdmHandleAppName.setAppName("<pre-initialized>",
                                                     UserHandle.myUserId());
             RuntimeInit.setApplicationObject(mAppThread.asBinder());
@@ -7623,7 +7629,7 @@ public final class ActivityThread extends ClientTransactionHandler
                     long dalvikMax = runtime.maxMemory();
                     long dalvikUsed = runtime.totalMemory() - runtime.freeMemory();
                     if (dalvikUsed > ((3*dalvikMax)/4)) {
-                        if (DEBUG_MEMORY_TRIM) Slog.d(TAG, "Dalvik max=" + (dalvikMax/1024)
+                        if (true) Slog.d(TAG, "Dalvik max=" + (dalvikMax/1024)
                                 + " total=" + (runtime.totalMemory()/1024)
                                 + " used=" + (dalvikUsed/1024));
                         mSomeActivitiesChanged = false;
@@ -7636,6 +7642,10 @@ public final class ActivityThread extends ClientTransactionHandler
                 }
             });
         } else {
+            // 目前只有最开始开机时有一次该分支走到，就是给系统进程设置的，应该就是system_server.
+            // system_server进程的名称在DDMS上不叫“system_server”，而是变成了“system_process”，
+            // 是因为system_server进程在执行ActivityThread.attach方法时将在DDMS上显示的名称改成了“system_process”，详见下面的代码片段。
+            Slog.i(TAG,"deng-ActivityThread--main--attach()--is system");
             // Don't set application object here -- if the system crashes,
             // we can't display an alert, we just want to die die die.
             android.ddm.DdmHandleAppName.setAppName("system_process",
@@ -7874,6 +7884,7 @@ public final class ActivityThread extends ClientTransactionHandler
 
     public static void main(String[] args) {
         Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, "ActivityThreadMain");
+        Slog.i(TAG,"deng-ActivityThread--main");
 
         // Install selective syscall interception
         AndroidOs.install();

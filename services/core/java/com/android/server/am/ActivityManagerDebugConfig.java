@@ -36,13 +36,13 @@ class ActivityManagerDebugConfig {
     static final boolean APPEND_CATEGORY_NAME = false;
 
     // Default log tag for the activity manager package.
-    static final String TAG_AM = "ActivityManager";
+    static final String TAG_AM = "ActivityManager(gang)";
 
     // Enable all debug log categories.
     static final boolean DEBUG_ALL = false;
 
     // Available log categories in the activity manager package.
-    static final boolean DEBUG_ANR = false;
+    static final boolean DEBUG_ANR = true;
     static final boolean DEBUG_BACKGROUND_CHECK = DEBUG_ALL || false;
     static final boolean DEBUG_BACKUP = DEBUG_ALL || false;
     static final boolean DEBUG_BROADCAST = DEBUG_ALL || false;
@@ -62,9 +62,9 @@ class ActivityManagerDebugConfig {
     static final boolean DEBUG_PROCESSES = DEBUG_ALL || false;
     static final boolean DEBUG_PROVIDER = DEBUG_ALL || false;
     static final boolean DEBUG_PSS = DEBUG_ALL || false;
-    static final boolean DEBUG_SERVICE = DEBUG_ALL || false;
+    static final boolean DEBUG_SERVICE = true || false;
     static final boolean DEBUG_FOREGROUND_SERVICE = DEBUG_ALL || false;
-    static final boolean DEBUG_SERVICE_EXECUTING = DEBUG_ALL || false;
+    static final boolean DEBUG_SERVICE_EXECUTING = true || false;
     static final boolean DEBUG_UID_OBSERVERS = DEBUG_ALL || false;
     static final boolean DEBUG_USAGE_STATS = DEBUG_ALL || false;
     static final boolean DEBUG_PERMISSIONS_REVIEW = DEBUG_ALL || false;

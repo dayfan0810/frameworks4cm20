@@ -43,6 +43,7 @@ class ClientLifecycleManager {
      * @see ClientTransaction
      */
     void scheduleTransaction(ClientTransaction transaction) throws RemoteException {
+        //此时AMS是客户端，调ApplicationThread的远程方法，去执行schedule-->scheduleTransaction
         final IApplicationThread client = transaction.getClient();
         transaction.schedule();
         if (!(client instanceof Binder)) {

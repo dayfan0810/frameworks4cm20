@@ -432,6 +432,7 @@ class ZygoteServer {
         mUsapPoolRefillTriggerTimestamp = INVALID_TIMESTAMP;
 
         while (true) {
+            Slog.i(TAG,"deng-runSelectLoop--0000");
             fetchUsapPoolPolicyPropsWithMinInterval();
             mUsapPoolRefillAction = UsapPoolRefillAction.NONE;
 
@@ -497,7 +498,7 @@ class ZygoteServer {
                 pollTimeoutMs = -1;
                 Slog.i(TAG,"deng-runSelectLoop--3333");
             } else {
-                Slog.i(TAG,"deng-runSelectLoop--走不进来");
+                Slog.i(TAG,"deng-runSelectLoop--4444");
                 long elapsedTimeMs = System.currentTimeMillis() - mUsapPoolRefillTriggerTimestamp;
 
                 if (elapsedTimeMs >= mUsapPoolRefillDelayMs) {
@@ -520,7 +521,9 @@ class ZygoteServer {
 
             int pollReturnValue;
             try {
+                Slog.i(TAG,"deng-runSelectLoop--Os.poll-111");
                 pollReturnValue = Os.poll(pollFDs, pollTimeoutMs);
+                Slog.i(TAG,"deng-runSelectLoop--Os.poll-222");
             } catch (ErrnoException ex) {
                 throw new RuntimeException("poll failed", ex);
             }
@@ -534,24 +537,32 @@ class ZygoteServer {
                 // conditional in the else branch.
                 mUsapPoolRefillTriggerTimestamp = INVALID_TIMESTAMP;
                 mUsapPoolRefillAction = UsapPoolRefillAction.DELAYED;
+                Slog.i(TAG,"deng-runSelectLoop--5555");
 
             } else {
                 boolean usapPoolFDRead = false;
+                Slog.i(TAG,"deng-runSelectLoop--6666");
 
                 while (--pollIndex >= 0) {
+                    // 采用I/O多路复用机制，当接收到客户端发出连接请求 或者数据处理请求到来，则往下执行；
+                    // 否则进入continue，跳出本次循环。
                     if ((pollFDs[pollIndex].revents & POLLIN) == 0) {
+                        Slog.i(TAG,"deng-runSelectLoop---continue");
                         continue;
                     }
 
                     if (pollIndex == 0) {
-                        Slog.i(TAG,"deng-runSelectLoop--4444");
+                        Slog.i(TAG,"deng-runSelectLoop--pollIndex = 0--is system server 7777");
                         // Zygote server socket
+                        // 即fds[0]，代表的是sServerSocket，则意味着有客户端连接请求；
+                        // 则创建ZygoteConnection对象,并添加到fds。
                         ZygoteConnection newPeer = acceptCommandPeer(abiList);
                         peers.add(newPeer);
                         socketFDs.add(newPeer.getFileDescriptor());
                     } else if (pollIndex < usapPoolEventFDIndex) {
                         // Session socket accepted from the Zygote server socket
-                        Slog.i(TAG,"deng-runSelectLoop--5555");
+                        //i>0，则代表通过socket接收来自对端的数据，并执行相应操作【见小节3.6】
+                        Slog.i(TAG, "deng-runSelectLoop--pollIndex = " + pollIndex + "8888");
                         try {
                             ZygoteConnection connection = peers.get(pollIndex);
                             boolean multipleForksOK = !isUsapPoolEnabled()
@@ -561,7 +572,7 @@ class ZygoteServer {
 
                             // TODO (chriswailes): Is this extra check necessary?
                             if (mIsForkChild) {
-                                Slog.i(TAG,"deng-runSelectLoop--6666");
+                                Slog.i(TAG,"deng-runSelectLoop--9999");
                                 // We're in the child. We should always have a command to run at
                                 // this stage if processCommand hasn't called "exec".
                                 if (command == null) {
@@ -574,7 +585,7 @@ class ZygoteServer {
                                 if (command != null) {
                                     throw new IllegalStateException("command != null");
                                 }
-                                Slog.i(TAG,"deng-runSelectLoop--7777");
+                                Slog.i(TAG,"deng-runSelectLoop--10-10-10-10");
                                 // We don't know whether the remote side of the socket was closed or
                                 // not until we attempt to read from it from processCommand. This
                                 // shows up as a regular POLLIN event in our regular processing

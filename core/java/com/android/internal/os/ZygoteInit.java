@@ -779,7 +779,9 @@ public class ZygoteInit {
         }
 
         /* For child process */
+        //Fork SystemServer
         if (pid == 0) {
+            Slog.i(TAG, "forkSystemServer--deng, fork 子进程 pid == "+pid, new Throwable("pid=0"));
             if (hasSecondZygote(abiList)) {
                 waitForSecondaryZygote(socketName);
             }
@@ -787,7 +789,8 @@ public class ZygoteInit {
             zygoteServer.closeServerSocket();
             return handleSystemServerProcess(parsedArgs);
         }
-        Slog.i(TAG, "forkSystemServer--deng, return null runnable");
+        //PID不为0的话，就是system_server
+        Slog.i(TAG, "forkSystemServer--deng, return 空的runnable, pid == "+pid, new Throwable("pid！=0"));
 
         return null;
     }
@@ -821,7 +824,6 @@ public class ZygoteInit {
     @UnsupportedAppUsage
     public static void main(String[] argv) {
         ZygoteServer zygoteServer = null;
-
         // Mark zygote start. This ensures that thread creation will throw
         // an error.
         ZygoteHooks.startZygoteNoThreadCreation();
@@ -851,6 +853,7 @@ public class ZygoteInit {
             String abiList = null;
             boolean enableLazyPreload = false;
             for (int i = 1; i < argv.length; i++) {
+                Log.i(TAG, "main args argv[i]) =  "+argv[i]);
                 if ("start-system-server".equals(argv[i])) {
                     startSystemServer = true;
                 } else if ("--enable-lazy-preload".equals(argv[i])) {
@@ -905,19 +908,23 @@ public class ZygoteInit {
             ZygoteHooks.stopZygoteNoThreadCreation();
 
             zygoteServer = new ZygoteServer(isPrimaryZygote);
-
+            Log.i(TAG, "deng--ZygoteInit.main---");
             if (startSystemServer) {
+                Log.i(TAG, "deng--ZygoteInit.main---if (startSystemServer)");
                 Runnable r = forkSystemServer(abiList, zygoteSocketName, zygoteServer);
-
                 // {@code r == null} in the parent (zygote) process, and {@code r != null} in the
                 // child (system_server) process.
                 if (r != null) {
-                    Log.i(TAG, "deng--r.run(), app ");
+                    Log.i(TAG, "deng--r != null, app abiList =  "+abiList+", zygoteSocketName = "+zygoteSocketName);
                     r.run();
                     return;
                 }
             }
-
+            /*
+            这里会走两次，
+             */
+            Log.i(TAG, "deng--r == null, abiList =  "+abiList+", zygoteSocketName = "+zygoteSocketName, new Throwable("r!=null"));
+            Log.i(TAG, "deng-全程只会在开机初始阶段走两次.因为存在32和64位zygote");
             Log.i(TAG, "deng--Accepting command socket connections");
 
             // The select loop returns early in the child process after a fork and
@@ -935,6 +942,7 @@ public class ZygoteInit {
         // We're in the child process and have exited the select loop. Proceed to execute the
         // command.
         if (caller != null) {
+            Log.i(TAG, "deng-caller != null, so run");
             caller.run();
         }
     }
